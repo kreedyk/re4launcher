@@ -1,0 +1,94 @@
+cmake_minimum_required(VERSION 3.10)
+project(RE4_Launcher)
+
+# Set C++20 standard to match Visual Studio project
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Define output directories
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+# Find required packages
+find_package(directx-headers CONFIG QUIET)
+if(NOT directx-headers_FOUND)
+    message(STATUS "DirectX headers package not found through CMake, using system headers")
+endif()
+
+# Source files
+set(SOURCE_FILES
+    src/main.cpp
+    src/ui.cpp
+    src/style.cpp
+    src/utils.cpp
+    src/executableversionchecker.cpp
+    resource.rc
+)
+
+# ImGui source files (make sure to add these to your project)
+set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/dependencies/imgui)
+set(IMGUI_SOURCES
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui_demo.cpp
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_tables.cpp
+    ${IMGUI_DIR}/imgui_widgets.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_win32.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_dx11.cpp
+)
+
+# Create executable
+add_executable(RE4_Launcher WIN32 ${SOURCE_FILES} ${IMGUI_SOURCES})
+
+# Include directories
+target_include_directories(RE4_Launcher PRIVATE
+    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/src
+    ${IMGUI_DIR}
+    ${IMGUI_DIR}/backends
+)
+
+# Linked libraries
+target_link_libraries(RE4_Launcher PRIVATE
+    d3d11.lib
+    dxgi.lib
+    user32.lib
+    gdi32.lib
+    shell32.lib
+    comdlg32.lib
+    version.lib
+)
+
+# Disable specific warnings
+if(MSVC)
+    target_compile_options(RE4_Launcher PRIVATE 
+        /wd4996  # Disable deprecated function warnings
+        /wd4244  # Disable conversion warnings
+    )
+    
+    # Set the subsystem to Windows
+    set_target_properties(RE4_Launcher PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+endif()
+
+# Create resources directory if it doesn't exist
+add_custom_command(TARGET RE4_Launcher PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/resources
+)
+
+# Check if launcher_icon.ico exists, if not create a placeholder
+add_custom_command(TARGET RE4_Launcher PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E echo "Checking if launcher_icon.ico exists"
+    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_SOURCE_DIR}/resources/.keep_dir
+)
+
+# Install targets
+install(TARGETS RE4_Launcher
+    RUNTIME DESTINATION bin
+)
+
+# Message to help users configure the project
+message(STATUS "RE4_Launcher project configured")
+message(STATUS "Make sure to place the following in your resources directory:")
+message(STATUS "  - launcher_icon.ico: Application icon")
+message(STATUS "  - bio4.exe: Game executable to embed")
