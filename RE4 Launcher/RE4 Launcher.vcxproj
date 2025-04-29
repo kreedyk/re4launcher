@@ -73,11 +73,9 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Admin\Downloads\kreed_injector\kreed_injector\Source\RE4 Launcher;C:\Users\Admin\Downloads\kreed_injector\kreed_injector\Source\RE4 Launcher\dependencies\imgui;C:\Users\Admin\Downloads\kreed_injector\kreed_injector\Source\RE4 Launcher\dependencies\imgui\backends;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\Admin\Downloads\kreed_injector\kreed_injector\Source\RE4 Launcher\dependencies\imgui\backends;C:\Users\Admin\Downloads\kreed_injector\kreed_injector\Source\RE4 Launcher\dependencies\imgui;C:\Users\Admin\Downloads\kreed_injector\kreed_injector\Source\RE4 Launcher\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
